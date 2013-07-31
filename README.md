@@ -13,13 +13,13 @@ It is awesome, check it out!
 
 ### Building ###
 Required packages:
-'''bash
+```bash
 apt-get install gcc-avr avr-libc avrdude libsdl1.2-dev
-'''
+```
 
 Compiling:
-'''bash
+```bash
 make
-'''
+```
 
 currently only made by me
