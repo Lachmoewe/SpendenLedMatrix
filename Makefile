@@ -6,15 +6,18 @@ AVRFLAGS = -D AVR -std=c99 -mmcu=atmega8
 SIMSRC = main.c sim/gfx.c
 SIMHEADERS = sim/gfx.h
 SIMOBJECTS = $(SIMSRC:.c=.o)
-GCFLAGS = -D SIM -std=99
+GCFLAGS = -D SIM -std=c99
 
 all: program.elf sim/simulation 
 
-program.elf: $(OBJECTS)
-	avr-gcc $(OBJECTS) $(AVRFLAGS) -o program.elf
+program.elf: main.c gfx.c
+	echo "program.elf, program.hex"
+	avr-gcc main.c gfx.c $(AVRFLAGS) -o program.elf
+	avr-objcopy -j .text -O ihex program.elf program.hex 
 
-sim/simulation: $(SIMOBJECTS)
-	gcc $(SIMOBJECTS) $(GCFLAGS) `sdl-config --cflags --libs` -o 'sim/simulation'
+sim/simulation: main.c sim/gfx.c
+	echo "sim"
+	gcc main.c sim/gfx.c -D SIM -std=c99 `sdl-config --cflags --libs` -o 'sim/simulation'
 
 
 

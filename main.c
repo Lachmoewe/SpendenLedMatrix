@@ -4,7 +4,7 @@
 // c is best viewed with 8 space tab
 
 #ifdef AVR
-#include <avr/io.h>
+//#include <avr/io.h>
 #include "gfx.h"
 #elif SIM
 #include "sim/gfx.h"
@@ -15,9 +15,18 @@
 
 
 void main(void) {
-        setLedXY(5,5,1);
+        canvasInit();
+        int x=0;
+        int y=0;
         while(true) {
-                canvasUpdate();
+                canvasShow();
+                setLedXY(x,y,1);
+
+                x++;
+                /*if (x>9) {
+                        x=0;
+                        y++;
+                }*/
         }
 
 
