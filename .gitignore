@@ -1,5 +1,7 @@
+*.hex
 *.elf
 *.out
 *.a
 *.swp
 *.o
+sim/simulation
