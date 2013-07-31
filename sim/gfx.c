@@ -122,7 +122,7 @@ void canvasShow() {
         if ( SDL_MUSTLOCK(screen) ) {
                 SDL_UnlockSurface(screen);
         }
-        sleep(1);
+        usleep(1000);
         /* Update just the part of the display that we've changed */
         SDL_UpdateRect(screen,0,0,0,0);
         if (!keepRunning) {
