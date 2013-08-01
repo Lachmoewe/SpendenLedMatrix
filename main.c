@@ -6,8 +6,10 @@
 #ifdef AVR
 //#include <avr/io.h>
 #include "gfx.h"
+void usleep(int t) {}
 #elif SIM
 #include "sim/gfx.h"
+#include <unistd.h>
 #endif
 
 #define true 1
@@ -17,18 +19,16 @@
 void main(void) {
         canvasInit();
         int x=0;
-        int y=0;
+        int color=1;
         while(true) {
                 canvasShow();
-                setLedXY(x,y,1);
+                usleep(5000);
+                setLedXY(x,0,color);
 
                 x++;
-                /*if (x>9) {
+                if (x > 119) {
                         x=0;
-                        y++;
-                }*/
+                        color=!color;
+                }
         }
-
-
-        // return 0;
 }

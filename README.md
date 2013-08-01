@@ -11,4 +11,15 @@ It is awesome, check it out!
 * Now only in C
 * No batteries included (#include "batteries" wont help)
 
+### Building ###
+Required packages:
+```bash
+apt-get install gcc-avr avr-libc avrdude libsdl1.2-dev
+```
+
+Compiling:
+```bash
+make
+```
+
 currently only made by me
