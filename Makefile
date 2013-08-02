@@ -1,12 +1,5 @@
-SRC = main.c gfx.c
-HEADERS = gfx.h
-OBJECTS = $(SRC:.c=.o)
-AVRFLAGS = -D AVR -std=c99 -mmcu=atmega8
-
-SIMSRC = main.c sim/gfx.c
-SIMHEADERS = sim/gfx.h
-SIMOBJECTS = $(SIMSRC:.c=.o)
-GCFLAGS = -D SIM -std=c99
+AVRFLAGS = "-D AVR -std=c99 -mmcu=atmega8"
+GCFLAGS = "-D SIM -std=c99 `sdl-config --cflags --libs`"
 
 all: program.elf sim/simulation 
 
@@ -17,7 +10,7 @@ program.elf: main.c gfx.c
 
 sim/simulation: main.c sim/gfx.c
 	echo "sim"
-	gcc main.c sim/gfx.c -D SIM -std=c99 `sdl-config --cflags --libs` -o 'sim/simulation'
+	gcc main.c sim/gfx.c $(GCFLAGS) -o 'sim/simulation'
 
 
 
