@@ -2,7 +2,8 @@
 
 #include "gfx.h"
 #include <avr/io.h>
-
+#include <avr/pgmspace.h>
+#include <avr/interrupt.h>
 #define true 1
 #define false 0
 
@@ -27,6 +28,10 @@ void canvasInit(void) {
         DDRC = 0b00001111;
         DDRD = 0b11110000;
         DDRB = 0xff;
+        TCCR0 |= _BV(CS01);
+        TIMSK |= _BV(TOIE0);
+        TIFR  |= _BV(TOV0);
+        sei();
 }
 
 void canvasRowHigh(int row) {
@@ -81,4 +86,9 @@ void canvasShow() {
                 // sleep(shortamountoftime);
                 canvasRowLow(y);
         }
+}
+ISR (SIG_OVERFLOW0) {
+        cli();
+        canvasShow();
+        sei();
 }

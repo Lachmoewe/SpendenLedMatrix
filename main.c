@@ -4,25 +4,19 @@
 // c is best viewed with 8 space tab
 
 // for the real thing
-#ifdef AVR
+#ifdef AVRMODE
 
 #define F_CPU 8000000UL
 #include "gfx.h"
-#include <util/delay.h>
+#include "delay.h"
+
+
 
 // for the simulation
-#elif SIM
+#elif SIMMODE
 
 #include "sim/gfx.h"
-#include <unistd.h>
-void _delay_ms(double t) {
-        int u=t*1000;
-        usleep(u);
-}
-void _delay_us(double t) {
-        int u=t;
-        usleep(u);
-}
+#include "sim/delay.h"
 #endif
 
 #define true 1
@@ -34,8 +28,7 @@ void main(void) {
         int x=0;
         int color=1;
         while(true) {
-                canvasShow();
-                _delay_ms(50);
+                _udelay(5000);
                 setLedXY(x,0,color);
 
                 x++;
