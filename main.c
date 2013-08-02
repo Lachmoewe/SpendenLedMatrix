@@ -28,7 +28,10 @@ void main(void) {
         int x=0;
         int color=1;
         while(true) {
-                _udelay(5000);
+                // 5ms delay (see delay.h for reference)
+                _mdelay(5);
+
+                // set led on or off
                 setLedXY(x,0,color);
 
                 x++;
