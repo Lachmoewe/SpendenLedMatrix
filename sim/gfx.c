@@ -132,6 +132,7 @@ void canvasShow() {
 void setLedXY(int x, int y, int value) { 
         // setLedXY from 0,0 to 9,11, value 0 or 1
         matrix[x+y*12]=value;
+        canvasShow();
 }
 int getLedXY(int x, int y) {
         return matrix[x+y*12];
