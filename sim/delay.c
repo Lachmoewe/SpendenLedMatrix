@@ -1,3 +1,4 @@
+#define _BSD_SOURCE  /* for usleep() */
 #include <unistd.h>
 
 void _udelay(int t) {
