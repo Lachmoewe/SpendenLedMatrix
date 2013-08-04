@@ -1,6 +1,5 @@
 
 #include <pthread.h>
-#include <semaphore.h>
 
 #include <SDL/SDL.h>
 #include <stdio.h>
