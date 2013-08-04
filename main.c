@@ -114,6 +114,6 @@ void main(void) {
                                         dir = rand() & 7;
                                 break;
                 }
-                /* _mdelay(5); */
+                 _mdelay(50);
         }
 }

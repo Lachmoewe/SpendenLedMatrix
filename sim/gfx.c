@@ -1,12 +1,17 @@
 
+#include <pthread.h>
+#include <semaphore.h>
+
 #include <SDL/SDL.h>
 #include <stdio.h>
+
+#include <signal.h>
+#include <unistd.h>
+
 #include "gfx.h"
 #define SIZEX 12
 #define SIZEY 10
 // totally stolen from a tutorial
-#include <signal.h>
-#include <unistd.h>
 
 static int keepRunning = 1;
 
@@ -32,6 +37,7 @@ int *canvas = matrix;
 SDL_Surface* screen = NULL;
 void canvasInit() {
         signal(SIGINT, intHandler);
+
         /* Initialize the SDL library and the video subsystem */
         if( SDL_Init(SDL_INIT_VIDEO) < 0 ) {
                 fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
@@ -48,6 +54,8 @@ void canvasInit() {
                 fprintf(stderr, "Couldn't set 120x100x8 video mode: %s\n", SDL_GetError());
                 exit(1);
         }
+        pthread_t pth; // thread identifier
+        pthread_create(&pth, NULL, canvasShow,"Updating screen...");
 }
 
 /*
@@ -89,50 +97,52 @@ void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel) {
                         break;           /* shouldn't happen, but avoids warnings */
         } // switch
 }
-void canvasShow() {
+
+// this will be threaded
+void *canvasShow(void *arg) {
         /* Code to set a red pixel at the center of the screen */
         Uint32 color, red, black;
         red=SDL_MapRGB(screen->format,255,0,0);
         black=SDL_MapRGB(screen->format,0,0,0);
 
-
-        /* Lock the screen for direct access to the pixels */
-        if ( SDL_MUSTLOCK(screen) ) {
-                if ( SDL_LockSurface(screen) < 0 ) {
-                        fprintf(stderr, "Can't lock screen: %s\n", SDL_GetError());
-                        return;
-                }
-        }
-
-        for (int y=0; y<SIZEY; y++){
-                for (int x=0; x<SIZEX; x++) {
-                        if (matrix[x+y*12]) {
-                                color = red;
-                        } else {
-                                color = black;
+        while(keepRunning) {
+                /* Lock the screen for direct access to the pixels */
+                if ( SDL_MUSTLOCK(screen) ) {
+                        if ( SDL_LockSurface(screen) < 0 ) {
+                                fprintf(stderr, "Can't lock screen: %s\n", SDL_GetError());
                         }
-                        for(int h=0; h<10; h++) {
-                                for(int v=0; v<10; v++) {
-                                        putpixel(screen, x*10+h, y*10+v, color);
+                }
+
+                for (int y=0; y<SIZEY; y++){
+                        for (int x=0; x<SIZEX; x++) {
+                                if (matrix[x+y*12]) {
+                                        color = red;
+                                } else {
+                                        color = black;
+                                }
+                                for(int h=0; h<10; h++) {
+                                        for(int v=0; v<10; v++) {
+                                                putpixel(screen, x*10+h, y*10+v, color);
+                                        }
                                 }
                         }
                 }
-        }
 
-        if ( SDL_MUSTLOCK(screen) ) {
-                SDL_UnlockSurface(screen);
+                if ( SDL_MUSTLOCK(screen) ) {
+                        SDL_UnlockSurface(screen);
+                }
+                /* Update just the part of the display that we've changed */
+                SDL_UpdateRect(screen,0,0,0,0);
+                usleep(50000);
         }
-        usleep(1000);
-        /* Update just the part of the display that we've changed */
-        SDL_UpdateRect(screen,0,0,0,0);
-        if (!keepRunning) {
-                exit(0);
-        }
+        return NULL;
 }
+
 void setLedXY(int x, int y, int value) { 
         // setLedXY from 0,0 to 9,11, value 0 or 1
         matrix[x+y*12]=value;
-        canvasShow();
+        if(!keepRunning) exit(0);
+        //canvasShow();
 }
 int getLedXY(int x, int y) {
         return matrix[x+y*12];

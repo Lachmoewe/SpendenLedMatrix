@@ -1,5 +1,5 @@
 AVRFLAGS = -D AVRMODE -std=c99 -mmcu=atmega8 -O0
-GCFLAGS = -D SIMMODE -std=c99 `sdl-config --cflags --libs`
+GCFLAGS = -D SIMMODE -std=c99 `sdl-config --cflags --libs` -lpthread
 
 all: program.elf sim/simulation 
 
