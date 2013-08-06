@@ -3,7 +3,6 @@
 #include "gfx.h"
 #include "delay.h"
 #include <avr/io.h>
-//#include <avr/pgmspace.h>
 #include <avr/interrupt.h>
 #define true 1
 #define false 0
@@ -16,7 +15,7 @@ int matrix[120] = {
         0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,1,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,
@@ -55,24 +54,15 @@ void canvasRowHigh(int row) {
 void canvasRowLow(void) {
         PORTC = 0;
         PORTD = 0;
-        PORTB = 0;
-}
-void canvasRowPump(int value) {
-       PORTB = (value<<PB4); 
-       _udelay(10);
-       PORTB |= (1<<PB2);
-       PORTB |= (1<<PB3);
-       _udelay(10);
-       PORTB &= (0<<PB3);
-       PORTB &= (0<<PB2); 
+        PORTB &= 0b11111100;
 }
 
 void setLedXY(int x, int y, int value) { 
         // setLedXY from 0,0 to 9,11, value 0 or 1
-        *(canvas+x+y*12)=value;
+        matrix[x+y*12]=value;
 }
 int getLedXY(int x, int y) {
-        return *(canvas+x+y*12);
+        return matrix[x+y*12];
 }
 
 void canvasShow() { 
@@ -80,9 +70,19 @@ void canvasShow() {
         for (int y=0; y<SIZEY; y++){
                 canvasRowHigh(y);
                 for (int x=0; x<SIZEX; x++) {
-                        canvasRowPump(!(getLedXY(x,y)));
+                       PORTB |= (getLedXY(x,y)<<PB4); 
+                       _udelay(1);
+                       PORTB |= (1<<PB3);
+                       _udelay(10);
+                       PORTB &= (0<<PB3);
+                       _udelay(1);
+                       PORTB &= 0b00000011;
+                       _udelay(1);
                 }
-                // sleep(shortamountoftime);
+                PORTB |= (1<<PB2);
+                _mdelay(1);
+                PORTB &= (0<<PB2);
+
                 canvasRowLow();
         }
 }
