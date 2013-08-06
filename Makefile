@@ -10,6 +10,9 @@ program.elf: main.c gfx.c
 sim/simulation: main.c sim/gfx.c
 	gcc main.c sim/gfx.c sim/delay.c $(GCFLAGS) -o 'sim/simulation'
 
+flash:
+	avrdude -c usbasp -p atmega8 -U program.hex
+
 clean:
 	rm program.elf program.hex sim/simulation
 

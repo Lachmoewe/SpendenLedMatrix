@@ -1,8 +1,9 @@
 
 
 #include "gfx.h"
+#include "delay.h"
 #include <avr/io.h>
-#include <avr/pgmspace.h>
+//#include <avr/pgmspace.h>
 #include <avr/interrupt.h>
 #define true 1
 #define false 0
@@ -11,11 +12,11 @@
 #define SIZEY 10
 
 int matrix[120] = {
+        1,0,1,0,1,0,1,0,1,0,1,0,
         0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,1,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,
@@ -27,7 +28,10 @@ int *canvas = matrix;
 void canvasInit(void) {
         DDRC = 0b00001111;
         DDRD = 0b11110000;
-        DDRB = 0xff;
+        DDRB = 0b00011111;
+        //TCCR2 = (1<<CS21);;
+        //TIMSK |= (1<<TOIE0);
+
         TCCR0 |= _BV(CS01);
         TIMSK |= _BV(TOIE0);
         TIFR  |= _BV(TOV0);
@@ -36,36 +40,31 @@ void canvasInit(void) {
 
 void canvasRowHigh(int row) {
         switch (row) {
-                case 0: PORTC = (1<<PC0); break;
-                case 1: PORTC = (1<<PC1); break;
-                case 2: PORTC = (1<<PC2); break;
-                case 3: PORTC = (1<<PC3); break;
-                case 4: PORTD = (1<<PD4); break;
-                case 5: PORTD = (1<<PD5); break;
-                case 6: PORTD = (1<<PD6); break;
-                case 7: PORTD = (1<<PD7); break;
-                case 8: PORTB = (1<<PB0); break;
-                case 9: PORTB = (1<<PB1); break;
+                case 0: PORTC |= (1<<PC0); break;
+                case 1: PORTC |= (1<<PC1); break;
+                case 2: PORTC |= (1<<PC2); break;
+                case 3: PORTC |= (1<<PC3); break;
+                case 4: PORTD |= (1<<PD4); break;
+                case 5: PORTD |= (1<<PD5); break;
+                case 6: PORTD |= (1<<PD6); break;
+                case 7: PORTD |= (1<<PD7); break;
+                case 8: PORTB |= (1<<PB0); break;
+                case 9: PORTB |= (1<<PB1); break;
         }
 }
-void canvasRowLow(int row) {
-        switch (row) {
-                case 0: PORTC = (0<<PC0); break;
-                case 1: PORTC = (0<<PC1); break;
-                case 2: PORTC = (0<<PC2); break;
-                case 3: PORTC = (0<<PC3); break;
-                case 4: PORTD = (0<<PD4); break;
-                case 5: PORTD = (0<<PD5); break;
-                case 6: PORTD = (0<<PD6); break;
-                case 7: PORTD = (0<<PD7); break;
-                case 8: PORTB = (0<<PB0); break;
-                case 9: PORTB = (0<<PB1); break;
-        }
+void canvasRowLow(void) {
+        PORTC = 0;
+        PORTD = 0;
+        PORTB = 0;
 }
 void canvasRowPump(int value) {
        PORTB = (value<<PB4); 
-       PORTB = (1<<PB3);
-       PORTB = (0<<PB3); 
+       _udelay(10);
+       PORTB |= (1<<PB2);
+       PORTB |= (1<<PB3);
+       _udelay(10);
+       PORTB &= (0<<PB3);
+       PORTB &= (0<<PB2); 
 }
 
 void setLedXY(int x, int y, int value) { 
@@ -84,10 +83,10 @@ void canvasShow() {
                         canvasRowPump(!(getLedXY(x,y)));
                 }
                 // sleep(shortamountoftime);
-                canvasRowLow(y);
+                canvasRowLow();
         }
 }
-ISR (SIG_OVERFLOW0) {
+ISR (SIG_OVERFLOW0 /*TIMER2_OVF_vect*/) {
         cli();
         canvasShow();
         sei();

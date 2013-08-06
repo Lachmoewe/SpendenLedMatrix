@@ -1,0 +1,21 @@
+AVRFLAGS = "-D AVR -std=c99 -mmcu=atmega8"
+GCFLAGS = "-D SIM -std=c99 `sdl-config --cflags --libs`"
+
+all: program.elf sim/simulation 
+
+program.elf: main.c gfx.c
+	avr-gcc main.c gfx.c $(AVRFLAGS) -o program.elf
+	avr-objcopy -j .text -O ihex program.elf program.hex 
+
+sim/simulation: main.c sim/gfx.c
+<<<<<<< HEAD
+	gcc main.c sim/gfx.c -D SIM -std=c99 `sdl-config --cflags --libs` -o 'sim/simulation'
+clean:
+	rm program.elf program.hex sim/simulation
+=======
+	echo "sim"
+	gcc main.c sim/gfx.c $(GCFLAGS) -o 'sim/simulation'
+
+>>>>>>> 778b271af89f9e6bb796d9d7fb32af8c2156349c
+
+
