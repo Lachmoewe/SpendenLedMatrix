@@ -70,17 +70,26 @@ void canvasShow() {
         for (int y=0; y<SIZEY; y++){
                 canvasRowHigh(y);
                 for (int x=0; x<SIZEX; x++) {
-                       PORTB |= (getLedXY(x,y)<<PB4); 
-                       _udelay(1);
-                       PORTB |= (1<<PB3);
-                       _udelay(10);
-                       PORTB &= (0<<PB3);
-                       _udelay(1);
-                       PORTB &= 0b00000011;
-                       _udelay(1);
+                        // PB4 = current Led value
+                        PORTB |= (getLedXY(x,y)<<PB4); 
+                        //_udelay(1);
+
+                        // set clk high
+                        PORTB |= (1<<PB3);
+                        //_udelay(10);
+
+                        // set clk low
+                        PORTB &= (0<<PB3);
+                        //_udelay(1);
+
+                        // reset all except PB0 and PB1
+                        // shouldn't be needed
+                        PORTB &= 0b00000011;
+                        //_udelay(1);
                 }
+                // writeout registers
                 PORTB |= (1<<PB2);
-                _mdelay(1);
+                //_udelay(1);
                 PORTB &= (0<<PB2);
 
                 canvasRowLow();

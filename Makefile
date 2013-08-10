@@ -16,4 +16,10 @@ flash:
 clean:
 	rm program.elf program.hex sim/simulation
 
+test:
+	avr-gcc test.c delay.c $(AVRFLAGS) -o test.elf
+	avr-objcopy -j .text -O ihex test.elf test.hex
+
+testflash:
+	avrdude -c usbasp -p atmega8 -U test.hex
 
