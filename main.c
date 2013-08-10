@@ -17,6 +17,7 @@
 
 #include "sim/gfx.h"
 #include "sim/delay.h"
+#include <stdlib.h>
 #endif
 
 #define true 1
@@ -65,65 +66,65 @@ unsigned char pics[PIC_H][PIC_W / 8] = {
 
 void main(void) {
         canvasInit();
-        while(true) {
-                setLedXY(0,0,1);
-                setLedXY(5,9,0);
-                canvasShow();
-                _mdelay(50);
-                setLedXY(0,0,0);
-                setLedXY(5,9,1);
-                canvasShow();
-                _mdelay(50);
-        }
-  //    int pic_x = 0, pic_y = PIC_H - SIZEY;
-  //    int dir = 2;  /* 0: N, 1: NE, 2: E, 3: SE, 4: S, 5: SW, 6: W, 7: NW */
   //    while(true) {
-  //            /* printf("dir=%i\tpic_x=%i\tpic_y=%i\n", dir, pic_x, pic_y); */
-  //            /* Paint */
-  //            for(int y = 0; y < 10; y++)
-  //                    for(int x = 0; x < 12; x++) {
-  //                            int px = pic_x + x, py = pic_y + y;
-  //                            setLedXY(x, y, (pics[py][px / 8] >> (7 - (px % 8))) & 1);
-  //                    }
-
-  //            /* Y motion */
-  //            switch(dir) {
-  //                    case 0:
-  //                    case 1:
-  //                    case 7:
-  //                            if (pic_y > 0)
-  //                                    pic_y--;
-  //                            else
-  //                                    dir = rand() & 7;
-  //                            break;
-  //                    case 3:
-  //                    case 4:
-  //                    case 5:
-  //                            if (pic_y < PIC_H - SIZEY)
-  //                                    pic_y++;
-  //                            else
-  //                                    dir = rand() & 7;
-  //                            break;
-  //            }
-  //            /* X motion */
-  //            switch(dir) {
-  //                    case 5:
-  //                    case 6:
-  //                    case 7:
-  //                            if (pic_x > 0)
-  //                                    pic_x--;
-  //                            else
-  //                                    dir = rand() & 7;
-  //                            break;
-  //                    case 1:
-  //                    case 2:
-  //                    case 3:
-  //                            if (pic_x < PIC_W - SIZEX)
-  //                                    pic_x++;
-  //                            else
-  //                                    dir = rand() & 7;
-  //                            break;
-  //            }
-  //             _mdelay(50);
+  //            setLedXY(0,0,1);
+  //            setLedXY(5,9,0);
+  //            //canvasShow();
+  //            _mdelay(50);
+  //            setLedXY(0,0,0);
+  //            setLedXY(5,9,1);
+  //            //canvasShow();
+  //            _mdelay(50);
   //    }
+        int pic_x = 0, pic_y = PIC_H - SIZEY;
+        int dir = 2;  /* 0: N, 1: NE, 2: E, 3: SE, 4: S, 5: SW, 6: W, 7: NW */
+        while(true) {
+                /* printf("dir=%i\tpic_x=%i\tpic_y=%i\n", dir, pic_x, pic_y); */
+                /* Paint */
+                for(int y = 0; y < 10; y++)
+                        for(int x = 0; x < 12; x++) {
+                                int px = pic_x + x, py = pic_y + y;
+                                setLedXY(x, y, (pics[py][px / 8] >> (7 - (px % 8))) & 1);
+                        }
+
+                /* Y motion */
+                switch(dir) {
+                        case 0:
+                        case 1:
+                        case 7:
+                                if (pic_y > 0)
+                                        pic_y--;
+                                else
+                                        dir = rand() & 7;
+                                break;
+                        case 3:
+                        case 4:
+                        case 5:
+                                if (pic_y < PIC_H - SIZEY)
+                                        pic_y++;
+                                else
+                                        dir = rand() & 7;
+                                break;
+                }
+                /* X motion */
+                switch(dir) {
+                        case 5:
+                        case 6:
+                        case 7:
+                                if (pic_x > 0)
+                                        pic_x--;
+                                else
+                                        dir = rand() & 7;
+                                break;
+                        case 1:
+                        case 2:
+                        case 3:
+                                if (pic_x < PIC_W - SIZEX)
+                                        pic_x++;
+                                else
+                                        dir = rand() & 7;
+                                break;
+                }
+                 _mdelay(50);
+        }
 }

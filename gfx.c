@@ -28,13 +28,14 @@ void canvasInit(void) {
         DDRC = 0b00001111;
         DDRD = 0b11110000;
         DDRB = 0b00011111;
-        //TCCR2 = (1<<CS21);;
-        //TIMSK |= (1<<TOIE0);
+        TCCR2 = (1<<CS22) | (1<<CS21);;
+        TIMSK |= (1<<TOIE2);
 
-        TCCR0 |= _BV(CS01);
-        TIMSK |= _BV(TOIE0);
-        TIFR  |= _BV(TOV0);
-//        sei();
+        // interrupt init
+      //TCCR0 |= _BV(CS01);
+      //TIMSK |= _BV(TOIE0);
+      //TIFR  |= _BV(TOV0);
+        sei();
 }
 
 void canvasRowHigh(int row) {
@@ -67,7 +68,6 @@ int getLedXY(int x, int y) {
 void canvasShow() { 
         // this shit needs to execute really fast
         for (int y=0; y<SIZEY; y++){
-                canvasRowHigh(y);
                 for (int x=0; x<SIZEX; x++) {
                         // PB4 = current Led value
                         if (!getLedXY(x,y)) {
@@ -78,19 +78,22 @@ void canvasShow() {
 
                         // set clk high
                         PORTB |= (1<<PB3);
-                        _udelay(1);
+                        //_udelay(1);
                         // set clk low
                         PORTB &= ~(1<<PB3);
                 }
                 // writeout registers
                 PORTB |= (1<<PB2);
-                _udelay(1);
+                //_udelay(1);
                 PORTB &= ~(1<<PB2);
-                canvasRowLow();
+                canvasRowHigh(y);
                 _udelay(10);
+                canvasRowLow();
         }
 }
-ISR (SIG_OVERFLOW0 /*TIMER2_OVF_vect*/) {
+
+// interrupt called function (every now and then)
+ISR (/*SIG_OVERFLOW0*/ TIMER2_OVF_vect) {
         cli();
         canvasShow();
         sei();
