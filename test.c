@@ -7,30 +7,31 @@ void main(void) {
         DDRD = 0xff;
         DDRC = 0xff;
         DDRB = 0xff;
-        PORTC |= (1<<PC0);
-        uint8_t state = 0;
+        PORTB |= (1<<PB0);
         while(1) {
-                for (int i=0;i<12;i++) {
-                                
-                        PORTB &= (0<<DATA); //D
+                PORTB &= ~(1<<DATA); //D
+                for (int i=0;i<12;i++) {                
+
                         PORTB |= (1<<SCK); //SCK
-                        PORTB &= (0<<SCK);
-                        //state=!state;
+                        _udelay(1);          //          _____
+                        PORTB &= ~(1<<SCK);  //   ______|     |_______
                 }
                 PORTB |= (1<<WRITEOUT);
-                PORTB &= (0<<WRITEOUT);
-                _mdelay(10);
+                _udelay(1);
+                PORTB &= ~(1<<WRITEOUT);
+                _mdelay(50);
+
+                PORTB |= (1<<DATA); //D
                 for (int i=0;i<12;i++) {
-                                
-                        PORTB |= (1<<DATA); //D
+
                         PORTB |= (1<<SCK); //SCK
-                        PORTB &= (0<<SCK);
-                        //state=!state;
+                        _udelay(1);
+                        PORTB &= ~(1<<SCK);
                 }
                 PORTB |= (1<<WRITEOUT);
-                PORTB &= (0<<WRITEOUT);
-                _mdelay(30);
+                _udelay(1);
+                PORTB &= ~(1<<WRITEOUT);
+                _mdelay(50);
         }
-
-
 }
+//Hallo du

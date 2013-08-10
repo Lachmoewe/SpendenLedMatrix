@@ -66,12 +66,14 @@ unsigned char pics[PIC_H][PIC_W / 8] = {
 void main(void) {
         canvasInit();
         while(true) {
-                setLedXY(5,5,1);
-                setLedXY(6,8,0);
-                _udelay(100);
-                setLedXY(5,5,0);
-                setLedXY(6,8,1);
-                _udelay(100);
+                setLedXY(0,0,1);
+                setLedXY(5,9,0);
+                canvasShow();
+                _mdelay(50);
+                setLedXY(0,0,0);
+                setLedXY(5,9,1);
+                canvasShow();
+                _mdelay(50);
         }
   //    int pic_x = 0, pic_y = PIC_H - SIZEY;
   //    int dir = 2;  /* 0: N, 1: NE, 2: E, 3: SE, 4: S, 5: SW, 6: W, 7: NW */

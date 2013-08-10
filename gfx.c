@@ -34,7 +34,7 @@ void canvasInit(void) {
         TCCR0 |= _BV(CS01);
         TIMSK |= _BV(TOIE0);
         TIFR  |= _BV(TOV0);
-        sei();
+//        sei();
 }
 
 void canvasRowHigh(int row) {
@@ -52,9 +52,9 @@ void canvasRowHigh(int row) {
         }
 }
 void canvasRowLow(void) {
-        PORTC = 0;
-        PORTD = 0;
-        PORTB &= 0b11111100;
+        PORTC &= ~( (1<<PC0) | (1<<PC1) | (1<<PC2) | (1<<PC3) );
+        PORTD &= ~( (1<<PD4) | (1<<PD5) | (1<<PD6) | (1<<PD7) );
+        PORTB &= ~( (1<<PB0) | (1<<PB1) );
 }
 
 void setLedXY(int x, int y, int value) { 
@@ -64,35 +64,30 @@ void setLedXY(int x, int y, int value) {
 int getLedXY(int x, int y) {
         return matrix[x+y*12];
 }
-
 void canvasShow() { 
         // this shit needs to execute really fast
         for (int y=0; y<SIZEY; y++){
                 canvasRowHigh(y);
                 for (int x=0; x<SIZEX; x++) {
                         // PB4 = current Led value
-                        PORTB |= (getLedXY(x,y)<<PB4); 
-                        //_udelay(1);
+                        if (!getLedXY(x,y)) {
+                                PORTB &= ~(1<<PB4);
+                        } else {
+                                PORTB |= (1<<PB4);
+                        }
 
                         // set clk high
                         PORTB |= (1<<PB3);
-                        //_udelay(10);
-
+                        _udelay(1);
                         // set clk low
-                        PORTB &= (0<<PB3);
-                        //_udelay(1);
-
-                        // reset all except PB0 and PB1
-                        // shouldn't be needed
-                        PORTB &= 0b00000011;
-                        //_udelay(1);
+                        PORTB &= ~(1<<PB3);
                 }
                 // writeout registers
                 PORTB |= (1<<PB2);
-                //_udelay(1);
-                PORTB &= (0<<PB2);
-
+                _udelay(1);
+                PORTB &= ~(1<<PB2);
                 canvasRowLow();
+                _udelay(10);
         }
 }
 ISR (SIG_OVERFLOW0 /*TIMER2_OVF_vect*/) {

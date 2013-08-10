@@ -1,4 +1,5 @@
 #include <util/delay_basic.h>
+#include "delay.h"
 // delay_basic.h contains:
 // void _delay_loop1(uint8_t)  with 256 possible iterations
 // void _delay_loop2(uint16_t) with 65536 possible iterations
@@ -7,11 +8,13 @@
 // this currently only works for 8MHz :D
 
 void _udelay(int t) {  // do _NOT_ rely on this, it is not accurate at all
-        _mdelay(t);
+        for (uint8_t i=0; i<t; i++) {
+                _delay_loop_2(20);
+        }
 }
 void _mdelay(int t) {
         for (uint8_t i=0; i<t; i++) {
-                _delay_loop_2(200);
+                _delay_loop_2(2000);
         }
         
 }
